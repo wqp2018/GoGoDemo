@@ -11,8 +11,9 @@
 
     <script type="text/javascript" src="{{ asset('/js/jquery.min.js')  }}"></script>
     <script type="text/javascript" src="{{ asset('/js/layer.js')  }}"></script>
-    <script type="text/javascript" src="{{ asset('js/vue.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/vue.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/jquery.cookie.js') }}"></script>
     @section('head')
         @show
     <title>Document</title>
@@ -82,6 +83,8 @@
 </body>
 <script>
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    // 进入新页面时清空cookie
+    // $.cookie('select_ids', null);
     $(function () {
 
         $(".ajax-post").click(function () {
@@ -97,6 +100,90 @@
             ajaxCommon(url, "post", data)
         })
 
+        // var ids = $.cookie('select_ids');
+        //
+        // if (ids != "null"){
+        //     ids = ids.split(",");
+        // }else {
+        //     ids = new Array();
+        // }
+        //
+        // var check_boxes = $("input[name='ids']")
+        //
+        // // 选中cookie中保存的
+        // if (ids instanceof Array == true && ids.length > 0){
+        //     $.each(ids, function (index, item) {
+        //         $.each(check_boxes, function (k, v) {
+        //             if ($(v).val() == item){
+        //                 $("input[name='ids'][value="+item+"]").attr('checked', true)
+        //             }
+        //         })
+        //     })
+        // }
+
+        // 多选框改变事件
+        $('.select_id').change(function () {
+            var checkBox = $("input[name='ids']")
+            var checkBoxSelected = $("input[name='ids']:checked")
+            if (checkBox.length == checkBoxSelected.length) {
+                $(".ids").prop('checked', true)
+            } else {
+                $(".ids").prop('checked', false)
+            }
+        })
+
+        // 全选
+        $(".ids").change(function () {
+            if ($(this).is(":checked")){
+                $("input[name='ids']").prop('checked', true)
+            } else {
+                $("input[name='ids']").prop('checked', false)
+            }
+        })
+
+        // 选中启用
+        $(".btn_enable").click(function () {
+            var select_ids = $(".select_id:checked")
+            if (select_ids.length == 0){
+                layer.alert("请至少选择一个！",{
+                    btn: ['确定'] //按钮
+                });
+                return;
+            }
+            var url = $(this).attr("url");
+            var data = new Array();
+            $.each(select_ids, function (index, item) {
+                data.push($(item).val())
+            })
+            var endData = {
+                "status": 1,
+                "id": data.join(',')
+            }
+
+            ajaxCommon(url, "post", endData)
+        })
+
+        // 选中禁用
+        $(".btn_disable").click(function () {
+            var select_ids = $(".select_id:checked")
+            if (select_ids.length == 0){
+                layer.alert("请至少选择一个！",{
+                    btn: ['确定'] //按钮
+                });
+                return;
+            }
+            var url = $(this).attr("url");
+            var data = new Array();
+            $.each(select_ids, function (index, item) {
+                data.push($(item).val())
+            })
+            var endData = {
+                "status": 0,
+                "id": data.join(',')
+            }
+
+            ajaxCommon(url, "post", endData)
+        })
     })
 
     function ajaxCommon(url, method, data) {
@@ -152,11 +239,26 @@
               //先重置active
               $(".menus").removeClass('active');
              var currentUrl = window.location.pathname;
+             var parentUrl = window.location.pathname;
+             var getSecondMenusUrl = "{{url('Base/secondMenusUrl')}}";
+             // 获取当前url的二级菜单
+              $.ajax({
+                  url: getSecondMenusUrl,
+                  data: {
+                      current_url: currentUrl
+                  },
+                  async: false,
+                  type: "get",
+                  success: function (res) {
+                      currentUrl = res.info.second_url;
+                      parentUrl = res.info.top_url;
+                  }
+              })
              if (currentUrl == "/"){
                  $(".menus[href='/User/list']").parent('li').addClass('active');
                  $(".childrenMenus[href='/User/list']").parent('li').addClass('active');
              }else {
-                 $(".menus[href='"+currentUrl+"']").parent('li').addClass('active');
+                 $(".menus[href='"+parentUrl+"']").parent('li').addClass('active');
                  $(".childrenMenus[href='"+currentUrl+"']").parent('li').addClass('active');
              }
           },
@@ -168,8 +270,9 @@
                 //获取父菜单id
                 if (currentUrl == "/"){
                     parent_id = $(".menus[href='/User/list']").attr('menu_id');
+                }else {
+                    parent_id = $(".menus[href='"+currentUrl+"']").attr('menu_id');
                 }
-
                 var url = "{{url('Base/childMenus')}}?parent_id=" + parent_id;
                 $.ajax({
                     url: url,

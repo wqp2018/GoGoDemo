@@ -15,8 +15,8 @@
         <div class="item">
             <div class="header">
                 <div class="col-lg-6">
-                    <a class="btn btn-info" href="">启用</a>
-                    <a class="btn btn-info" href="">禁用</a>
+                    <button type="button" url="{{action('Admin\UserController@postStatus', ['mod' => 'user'])}}" class="btn btn-info btn_enable">启用</button>
+                    <button type="button" url="{{action('Admin\UserController@postStatus', ['mod' => 'user'])}}" class="btn btn-info btn_disable">禁用</button>
                 </div>
                 <div class="col-lg-6">
                     <form action="{{url('/User/list')}}">
@@ -33,7 +33,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th><input class="ids" type="checkbox"></th>
+                            <th><input name="select_all" value="999" class="ids" type="checkbox"></th>
                             <th>id</th>
                             <th>用户名</th>
                             <th>头像</th>
@@ -45,7 +45,7 @@
                     <tbody>
                         @forelse($list as $v)
                             <tr>
-                                <td><input type="checkbox" value="{{$v['id']}}"></td>
+                                <td><input class="select_id" name="ids" type="checkbox" value="{{$v['id']}}"></td>
                                 <td>{{$v['id']}}</td>
                                 <td>{{$v['user_name']}}</td>
                                 <td><img src="{{$v['avatar']}}" height="48px" width="48px"></td>
@@ -57,7 +57,9 @@
                                         <a class="ajax-post" url="{{action('Admin\UserController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'user'])}}"><span class="glyphicon glyphicon-remove"></span></a>
                                     @endif
                                 </td>
-                                <td></td>
+                                <td>
+                                    <a href="{{action('Admin\UserController@getForm', ['id' => $v['id']])}}">查看信息</a>
+                                </td>
                             </tr>
                             @empty
                             <tr>
@@ -70,9 +72,18 @@
                 <div style="text-align: center">
                     {{ $list->links() }}
                 </div>
-
             </div>
-
         </div>
     </div>
     @stop
+
+@section('head')
+    <script>
+        $(function () {
+
+        })
+
+
+
+    </script>
+@stop

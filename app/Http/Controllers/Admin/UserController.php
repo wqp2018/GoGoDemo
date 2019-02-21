@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Database\Query\Builder;
 use DB;
 use Illuminate\Http\Request;
 
@@ -24,6 +23,22 @@ class UserController extends BaseController
         $list = $builder->paginate(env('PAGE_SIZE',10));
 
         return view('user.list',compact('list','keyword'));
+    }
+
+    public function getForm(Request $request){
+        $id = $request->get('id', 0);
+
+        $data = [];
+
+        if ($id != 0){
+            $data = DB::table('user')->find($id);
+        }
+
+        return view('user.form', compact('data'));
+    }
+
+    public function getTest(){
+        return view('user.test');
     }
 
     public function postStatus(Request $request)

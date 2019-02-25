@@ -112,6 +112,7 @@ class LoginController extends Controller{
 
                 $response['code'] = 1;
                 $response['msg'] = "登录成功，即将跳转";
+                $response['url'] = url("User/list");
                 return $response;
             }
         }

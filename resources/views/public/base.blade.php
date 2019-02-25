@@ -184,6 +184,27 @@
 
             ajaxCommon(url, "post", endData)
         })
+
+        // 选中删除
+        $(".btn_delete").click(function () {
+            var select_ids = $(".select_id:checked")
+            if (select_ids.length == 0){
+                layer.alert("请至少选择一个！",{
+                    btn: ['确定'] //按钮
+                });
+                return;
+            }
+            var url = $(this).attr("url");
+            var data = new Array();
+            $.each(select_ids, function (index, item) {
+                data.push($(item).val())
+            })
+            var endData = {
+                "id": data.join(',')
+            }
+
+            ajaxCommon(url, "post", endData)
+        })
     })
 
     function ajaxCommon(url, method, data) {

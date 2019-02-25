@@ -11,11 +11,19 @@
 |
 */
 
+// 注册路由
+Route::get('/register', 'RegisterController@getRegister');
+Route::post('/register/sendEmail', 'RegisterController@sendEmail');
+Route::post('/register', 'RegisterController@postRegister');
+
 // 登录路由
 Route::get('/login','LoginController@userLogin');
 Route::post('/login','LoginController@postUserLogin');
 Route::get('/adminLogin','LoginController@adminLogin');
 Route::post('/adminLogin','LoginController@postAdminLogin');
+
+// 测试
+Route::get('TestApi/test', 'Api\TestApiController@getTest');
 
 // 验证码
 Route::get('/getCaptcha', 'LoginController@getCaptcha');
@@ -47,4 +55,6 @@ Route::group(['prefix' => 'Menus', 'namespace' => 'Admin', 'middleware' => 'admi
     Route::get('list', 'MenusController@getList');
     Route::get('form', 'MenusController@getForm');
     Route::post('form', 'MenusController@postForm');
+    Route::post('status', 'MenusController@postStatus');
+    Route::post('delete', 'MenusController@postDelete');
 });

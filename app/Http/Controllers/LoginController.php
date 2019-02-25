@@ -17,15 +17,72 @@ use DB;
 class LoginController extends Controller{
 
     public function userLogin(){
+//        if (Session::get('user') != null){
+//            return redirect('');
+//        }
         return view('login');
     }
 
-    public function postUserLogin(){
+    public function postUserLogin(Request $request){
+        $data = $request->all();
+        $captcha = Session::get('myCaptcha');
 
+        $response = [
+            "code" => 0,
+            "msg" => ""
+        ];
+
+        if (!$data['captcha'] || strcasecmp($captcha, $data['captcha']) != 0){
+            $response['msg'] = "验证码错误，请重新输入";
+            return $response;
+        }
+
+        $user = DB::table('user')
+            ->where('user_name', $data['username'])
+            ->first();
+
+        if ($user){
+            $password = Crypt::decrypt($user['password_encry']);
+            if ($password == $data['password']){
+                $this->userDoLogin($user);
+
+                $response['code'] = 1;
+                $response['msg'] = "登录成功，即将跳转";
+                $response['url'] = url('UserApi/homePage');
+                return $response;
+            }
+        }
+
+        $response['msg'] = "用户名或密码错误";
+        return $response;
+
+    }
+
+    // 用户登录
+    private function userDoLogin($user){
+        $session_id = Session::getId();
+
+        // 本地缓存用户信息
+        Session::put("user", $user);
+        // user_id 保存用户的session_id
+        $session_user_id = sprintf("user_%s", $user['id']);
+        // 缓存到本地，验证需要
+        Session::put($session_user_id, $session_id);
+
+        // 先获取redis 中的sessionId
+        $redis_session_id = \Cache::get($session_user_id);
+        // 两个session_id 不同，则说明session 过期， 或者异处登录
+        if ($redis_session_id != $session_id){
+            \Cache::put($session_user_id, $session_id, env("CACHE_MINUTES·1111111111111", 30));
+        }
     }
 
     public function adminLogin(){
         $admin = 1;
+        // 若已登录，直接进入系统
+        if (Session::get('admin') != null){
+            return redirect('User/list');
+        }
         return view('login', compact('admin'));
     }
 

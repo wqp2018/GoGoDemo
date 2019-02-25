@@ -5,7 +5,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <title>请登录</title>
+    <title>注册账号</title>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 
     <script type="text/javascript" src="{{ asset('/js/jquery.min.js')  }}"></script>
@@ -24,14 +24,14 @@
     }
     body {
         font-family: Arial;
-        background-color: #3498DB;
+        background-color: #d0d0d0;
         padding: 50px;
     }
-    .login {
+    .register {
         margin: 20px auto;
         width: 300px;
     }
-    .login-screen {
+    .register-screen {
         background-color: #FFF;
         padding: 20px;
         border-radius: 5px
@@ -42,7 +42,7 @@
         color: #777;
     }
 
-    .login-form {
+    .register-form {
         text-align: center;
     }
     .control-group {
@@ -87,7 +87,7 @@
         background-color: #2980B9;
     }
 
-    .login-link {
+    .register-link {
         font-size: 12px;
         color: #444;
         display: block;
@@ -97,30 +97,37 @@
 
 </style>
 <body>
-<div class="login">
-    <div class="login-screen">
+<div class="register">
+    <div class="register-screen">
         <div class="app-title">
-            <h1>Login</h1>
+            <h1>注册GoGo</h1>
         </div>
-        <form method="post" @if(isset($admin)) url="{{url('/adminLogin')}}" @else url="{{url('/login')}}" @endif>
-            <div class="login-form">
+        <form method="post" @if(isset($admin)) url="{{url('/register')}}" @else url="{{url('/register')}}" @endif>
+            <div class="register-form">
                 <div class="control-group">
-                    <input type="text" class="login-field" name="username" value="" placeholder="请输入用户名" id="login-name">
-                    <label class="login-field-icon fui-user" for="login-name"></label>
+                    <input type="text" class="register-field" name="user_name" value="" placeholder="请输入用户名" id="register-name">
+                    <label class="register-field-icon fui-user" for="register-name"></label>
                 </div>
 
                 <div class="control-group">
-                    <input type="password" class="login-field" name="password" value="" placeholder="请输入密码" id="login-pass">
-                    <label class="login-field-icon fui-lock" for="login-pass"></label>
+                    <input type="password" class="register-field" name="password_encry" value="" placeholder="请输入密码" id="register-pass">
+                    <label class="register-field-icon fui-lock" for="register-pass"></label>
+                </div>
+                
+                <div class="control-group">
+                    <input type="email" class="register-field" name="email" value="" placeholder="请输入邮箱" id="register-email">
+                    <label class="register-field-icon fui-lock" for="register-email"></label>
                 </div>
 
                 <div class="control-group">
-                    <input class="login-field" value="" name="captcha" placeholder="请输入验证码" id="login-captcha">
-                    <img id="captcha" style="cursor: pointer;margin-top: 10px" onclick="changeCaptcha()" src="{{url('getCaptcha')}}">
+                    <input class="register-field" value="" name="validate_code" placeholder="请输入邮箱验证码" id="register-validateCode">
                 </div>
 
-                <button type="button" style="margin-bottom: 10px" class="confirm btn btn-primary">确定</button>
-                <a href="{{url('/register')}}">注册</a>
+                <div style="margin-bottom: 10px">
+                    <button onclick="sendEmailValidate(this)" type="button" style="width: 120px;display: inline-block" class="btn btn-primary">发送验证码</button>
+                    <button type="button" style="width: 120px;display: inline-block" disabled="disabled" class="confirm btn btn-primary btn-confirm">确认信息</button>
+                </div>
+                <a href="{{url('/login')}}">返回登录</a>
             </div>
         </form>
     </div>
@@ -144,7 +151,8 @@
                 type: "post",
                 data: data,
                 success: function (res) {
-                    if (res != null && res.code == 0){
+                    console.log(res)
+                    if (res == "" || res.code == 0){
                         layer.confirm(res.msg, {
                             btn: ['确定'] //按钮
                         });
@@ -161,25 +169,64 @@
 
     // 检查表单完整
     function checkData() {
-        var username = $("#login-name").val();
+        var username = $("#register-name").val();
         if (username == ""){
             return "用户名不能为空";
         }
-        var password = $("#login-pass").val();
+        var password = $("#register-pass").val();
         if (password == ""){
             return "密码不能为空";
         }
-        var captcha = $("#login-captcha").val();
-        if (captcha == ""){
+        var email = $("#register-email").val();
+        if (email == ""){
+            return "邮箱不能为空";
+        }
+        var validateCode = $("#register-validateCode").val();
+        if (validateCode == ""){
             return "请先输入验证码";
         }
         return true;
     }
 
-    // 刷新验证码
-    function changeCaptcha() {
-        var url = "{{url('getCaptcha')."?date="}}" + new Date().getTime();
+    // 发送邮件验证码
+    function sendEmailValidate(_this) {
+        var url = "{{url('/register/sendEmail')}}";
+        var email = $("#register-email").val();
+        if (email == ""){
+            layer.alert("请先输入邮箱账号!",{
+                btn: ['确定']
+            })
+            return
+        }
+        var data = {
+            email: email
+        }
 
-        $("#captcha").attr('src', url)
+        $(_this).prop("disabled", "disabled")
+        $.ajax({
+            url: url,
+            type: "post",
+            data: data,
+            success: function (res) {
+                if (res.code == 0){
+                    layer.alert(res.msg,{
+                        btn: ['确定']
+                    })
+                } else {
+                    layer.msg(res.msg);
+                    $(".btn-confirm").removeAttr("disabled")
+                    var time = 60;
+                    var timer = setInterval(function () {
+                        $(_this).text("重新发送(" + time + ")")
+                        time--;
+                        if (time < 0){
+                            clearInterval(timer);
+                            $(_this).text("重新发送");
+                            $(_this).removeAttr("disabled");
+                        }
+                    },1000)
+                }
+            }
+        })
     }
 </script>

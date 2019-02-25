@@ -2,6 +2,9 @@
 
 @section('style')
     <style>
+        body {
+            overflow: scroll;
+        }
         td {
             height: 48px;
             line-height: 48px !important;
@@ -16,11 +19,12 @@
             <div class="header">
                 <div class="col-lg-6">
                     <a class="btn btn-info" href="{{url('Menus/form')}}">新增</a>
-                    <a class="btn btn-info" href="">删除</a>
+                    <button class="btn btn-info btn_delete" url="{{action('Admin\MenusController@postDelete', ['mod' => 'menus'])}}">删除</button>
                 </div>
                 <div class="col-lg-6">
-                    <form action="{{url('/Menus/list')}}">
+                    <form action="{{url('Menus/list')}}">
                         <div class="input-group">
+                            <input type="hidden" name="parent_id" value="{{$parent_id or 0}}">
                             <input type="text" name="keyword" value="{{$keyword or ''}}" class="form-control" placeholder="请输入菜单名称">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="submit">查找</button>
@@ -33,7 +37,7 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th><input class="ids" type="checkbox"></th>
+                        <th><input name="select_all" class="ids" type="checkbox"></th>
                         <th>id</th>
                         <th>菜单名称</th>
                         <th>状态</th>
@@ -43,18 +47,19 @@
                     <tbody>
                     @forelse($list as $v)
                         <tr>
-                            <td><input type="checkbox" value="{{$v['id']}}"></td>
+                            <td><input class="select_id" name="ids" type="checkbox" value="{{$v['id']}}"></td>
                             <td>{{$v['id']}}</td>
-                            <td>{{$v['name']}}</td>
+                            <td><a href="{{action('Admin\MenusController@getList', ['parent_id' => $v['id']])}}">{{$v['name']}}</a></td>
                             <td>
                                 @if($v['status'] == 1)
-                                    <a class="ajax-post" url="{{action('Admin\UserController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'user'])}}"><span class="glyphicon glyphicon-ok"></span></a>
+                                    <a class="ajax-post" style="cursor: pointer" url="{{action('Admin\MenusController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'menus'])}}"><span class="glyphicon glyphicon-ok"></span></a>
                                 @else
-                                    <a class="ajax-post" url="{{action('Admin\UserController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'user'])}}"><span class="glyphicon glyphicon-remove"></span></a>
+                                    <a class="ajax-post" style="cursor: pointer" url="{{action('Admin\MenusController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'menus'])}}"><span class="glyphicon glyphicon-remove"></span></a>
                                 @endif
                             </td>
                             <td>
                                 <a href="{{action('Admin\MenusController@getForm', ['id' => $v['id']])}}">编辑</a>
+                                <a style="cursor: pointer" class="ajax-post" url="{{action('Admin\MenusController@postDelete',['id' => $v['id'],'mod' => 'menus'])}}">删除</a>
                             </td>
                         </tr>
                     @empty

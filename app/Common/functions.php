@@ -46,3 +46,12 @@ function get_db_config($name){
     \Cache::add($name, $result, env("CACHE_MINUTES"));
     return $result;
 }
+
+function getRandNum($size){
+    $num = "";
+    for ($i = 0; $i < $size; $i++){
+        $num .= rand(0,9);
+    }
+
+    return $num;
+}

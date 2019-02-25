@@ -33,7 +33,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th><input name="select_all" value="999" class="ids" type="checkbox"></th>
+                            <th><input name="select_all" class="ids" type="checkbox"></th>
                             <th>id</th>
                             <th>用户名</th>
                             <th>头像</th>

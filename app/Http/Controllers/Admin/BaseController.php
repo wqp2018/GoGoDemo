@@ -129,6 +129,23 @@ class BaseController extends Controller
         return $this->ajaxFail(null,'修改状态失败');
     }
 
+    // 删除
+    public function postDelete(Request $request){
+        $id = $request->get('id');
+        $ids = explode(",", $id);
+
+        $mod = $request->get('mod');
+
+        $success = DB::table($mod)
+            ->whereIn('id',$ids)
+            ->delete();
+
+        if ($success){
+            return $this->ajaxSuccess(null,"删除成功",$this->getMarkPage());
+        }
+        return $this->ajaxFail(null,'删除失败');
+    }
+
     // 获取当前url的二级菜单、最顶级菜单
     public function getSecondMenusUrl(Request $request){
         $url = $request->get('current_url');

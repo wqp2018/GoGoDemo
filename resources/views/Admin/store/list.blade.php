@@ -1,0 +1,2 @@
+@extends('Admin.public.base')
+

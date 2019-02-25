@@ -22,7 +22,7 @@ class UserController extends BaseController
         }
         $list = $builder->paginate(env('PAGE_SIZE',10));
 
-        return view('user.list',compact('list','keyword'));
+        return view('Admin.user.list',compact('list','keyword'));
     }
 
     public function getForm(Request $request){
@@ -34,11 +34,11 @@ class UserController extends BaseController
             $data = DB::table('user')->find($id);
         }
 
-        return view('user.form', compact('data'));
+        return view('Admin.user.form', compact('data'));
     }
 
     public function getTest(){
-        return view('user.test');
+        return view('Admin.user.test');
     }
 
     public function postStatus(Request $request)

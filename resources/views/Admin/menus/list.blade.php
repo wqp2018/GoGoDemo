@@ -1,4 +1,4 @@
-@extends('public.base')
+@extends('Admin.public.base')
 
 @section('style')
     <style>

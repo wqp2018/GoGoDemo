@@ -1,2 +1,0 @@
-@extends('public.base')
-

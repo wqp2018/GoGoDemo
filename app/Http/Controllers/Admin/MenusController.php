@@ -30,7 +30,7 @@ class MenusController extends BaseController{
         }
         $list = $builder->paginate(env('PAGE_SIZE', 10));
 
-        return view('menus.list', compact('list', 'parent_id'));
+        return view('Admin.menus.list', compact('list', 'parent_id'));
     }
 
     public function getForm(Request $request){
@@ -45,7 +45,7 @@ class MenusController extends BaseController{
             $data = DB::table('menus')->find($id);
         }
 
-        return view('menus.form', compact('data', 'newMenus'));
+        return view('Admin.menus.form', compact('data', 'newMenus'));
     }
 
     public function postForm(MenusModel $menusModel, Request $request){

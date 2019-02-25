@@ -1,1 +1,1 @@
-@extends('public.base')
+@extends('Admin.public.base')

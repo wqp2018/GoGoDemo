@@ -24,6 +24,6 @@ class StoreController extends BaseController{
 
         $list = $builder->paginate(env("PAGE_SIZE",10));
 
-        return view('store.list',compact('list','keyword'));
+        return view('Admin.store.list',compact('list','keyword'));
     }
 }

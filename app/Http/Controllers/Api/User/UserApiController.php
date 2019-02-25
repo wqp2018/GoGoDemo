@@ -22,7 +22,13 @@ class UserApiController extends BaseApiController {
 
     // 用户首页
     public function getHomePage(){
-        return \Session::get("user");
+        try{
+            $user = $this->userService->checkUserLogin();
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+
+        return view('Api.user.index');
     }
 
     // 热门餐厅

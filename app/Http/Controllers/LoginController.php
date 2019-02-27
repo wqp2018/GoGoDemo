@@ -73,7 +73,7 @@ class LoginController extends Controller{
         $redis_session_id = \Cache::get($session_user_id);
         // 两个session_id 不同，则说明session 过期， 或者异处登录
         if ($redis_session_id != $session_id){
-            \Cache::put($session_user_id, $session_id, env("CACHE_MINUTES·1111111111111", 30));
+            \Cache::put($session_user_id, $session_id, env("CACHE_MINUTES", 30));
         }
     }
 

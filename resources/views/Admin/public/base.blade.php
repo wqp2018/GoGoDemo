@@ -20,7 +20,7 @@
 </head>
 <style>
     body{
-        overflow: hidden;
+        /*overflow: hidden;*/
     }
     [v-cloak] {
         display:none
@@ -205,7 +205,49 @@
 
             ajaxCommon(url, "post", endData)
         })
+
+        $(".uploadImage").change(function () {
+            var url = "{{url("Base/uploadImage")}}"
+            var data = new FormData($("#form")[0]);
+
+            $.ajax({
+                url: url,
+                type: "post",
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status == 0){
+                        layer.alert(res.message, {
+                            btn: ["确定"]
+                        })
+                    } else {
+                        $("#image_show").attr("src", res.url)
+                    }
+                }
+            })
+        })
     })
+
+    // 上传图片
+    function uploadImage() {
+        $(".uploadImage").click()
+    }
+
+    //  弹窗
+    function openDialog(size, url, title) {
+        if (title == ""){
+            title = "信息"
+        }
+        layer.open({
+            type: 2,
+            area: [size.width, size.height],
+            title: title,
+            fixed: false, //不固定
+            maxmin: true,
+            content: url
+        });
+    }
 
     function ajaxCommon(url, method, data) {
         $.ajax({
@@ -216,7 +258,9 @@
                 if (res.status == 1){
                     layer.msg(res.message)
                     setTimeout(function () {
-                        window.location.href = res.url
+                        if (res.url != ""){
+                            window.location.href = res.url
+                        }
                     },1500)
                 }else {
                     layer.alert(res.message, {
@@ -292,6 +336,20 @@
                 if (currentUrl == "/"){
                     parent_id = $(".menus[href='/User/list']").attr('menu_id');
                 }else {
+                    var currentUrl = window.location.pathname;
+                    var getSecondMenusUrl = "{{url('Base/secondMenusUrl')}}";
+                    // 获取当前url的二级菜单
+                    $.ajax({
+                        url: getSecondMenusUrl,
+                        data: {
+                            current_url: currentUrl
+                        },
+                        async: false,
+                        type: "get",
+                        success: function (res) {
+                            currentUrl = res.info.second_url;
+                        }
+                    })
                     parent_id = $(".menus[href='"+currentUrl+"']").attr('menu_id');
                 }
                 var url = "{{url('Base/childMenus')}}?parent_id=" + parent_id;
@@ -307,3 +365,5 @@
     })
 </script>
 </html>
+@section('script')
+@show

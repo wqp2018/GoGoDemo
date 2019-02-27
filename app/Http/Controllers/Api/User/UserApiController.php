@@ -28,7 +28,12 @@ class UserApiController extends BaseApiController {
             return $e->getMessage();
         }
 
-        return view('Api.user.index');
+        return view('Api.user.index', compact('user'));
+    }
+
+    // 退出登录
+    public function logout(){
+
     }
 
     // 热门餐厅

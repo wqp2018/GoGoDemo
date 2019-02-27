@@ -35,6 +35,7 @@ Route::group(['prefix' => 'Base','namespace' => 'Admin', 'middleware' => 'admin'
     Route::get('secondMenus','BaseController@getSecondMenus');
     Route::get('secondMenusUrl','BaseController@getSecondMenusUrl');
     Route::get('childMenus','BaseController@getChildrenMenus');
+    Route::post('uploadImage','BaseController@uploadImage');
 });
 
 //UserController
@@ -47,7 +48,11 @@ Route::group(['prefix' => 'User','namespace' => 'Admin', 'middleware' => 'admin'
 
 //StoreController
 Route::group(['prefix' => 'Store','namespace' => 'Admin', 'middleware' => 'admin'],function (){
+    Route::get('form','StoreController@getForm');
+    Route::post('form','StoreController@postForm');
     Route::get('list','StoreController@getList');
+    Route::get('map','StoreController@getMap');
+    Route::post('status','StoreController@postStatus');
 });
 
 //MenusController
@@ -57,4 +62,10 @@ Route::group(['prefix' => 'Menus', 'namespace' => 'Admin', 'middleware' => 'admi
     Route::post('form', 'MenusController@postForm');
     Route::post('status', 'MenusController@postStatus');
     Route::post('delete', 'MenusController@postDelete');
+});
+
+//CityController
+Route::group(['prefix' => 'City', 'namespace' => 'Admin', 'middleware' => 'admin'], function (){
+    Route::get('firstLevelCity', 'CityController@getFirstLevelCity');
+    Route::get('nextLevelCity', 'CityController@getNextLevelCity');
 });

@@ -184,4 +184,24 @@ class BaseController extends Controller
         return $parent_url['url'];
     }
 
+    // 上传图片
+    public function uploadImage(Request $request){
+        $image = $request->file('avatar');
+
+        $image_path = "uploads/images";
+        $rules = ['jpg', 'png', 'gif'];
+
+        $clientName = $image->getClientOriginalName();
+        $extension = $image->getClientOriginalExtension();
+        if (!in_array($extension, $rules)){
+            return $this->ajaxFail("","上传图片格式需为jpg,png或者gif");
+        }
+
+        $newName = microtime(true) * 10000 . "_" . $clientName;
+        $path = $image->move($image_path, $newName);
+        $image_url = "/".$image_path . "/" . $newName;
+
+        return $this->ajaxSuccess("", "", $image_url);
+    }
+
 }

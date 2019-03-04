@@ -13,6 +13,6 @@ use App\Http\Controllers\Controller;
 class TestApiController extends Controller{
 
     public function getTest(){
-        return \Crypt::encrypt(12345678);
+        \Log::info(123);
     }
 }

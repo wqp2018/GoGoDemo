@@ -51,9 +51,9 @@ Route::group(['prefix' => 'Store','namespace' => 'Admin', 'middleware' => 'admin
     Route::get('form','StoreController@getForm');
     Route::post('form','StoreController@postForm');
     Route::get('list','StoreController@getList');
-    Route::get('map','StoreController@getMap');
     Route::post('status','StoreController@postStatus');
 });
+Route::get('Store/map','Admin\StoreController@getMap');
 
 //MenusController
 Route::group(['prefix' => 'Menus', 'namespace' => 'Admin', 'middleware' => 'admin'], function (){
@@ -64,8 +64,16 @@ Route::group(['prefix' => 'Menus', 'namespace' => 'Admin', 'middleware' => 'admi
     Route::post('delete', 'MenusController@postDelete');
 });
 
+//FoodController
+Route::group(['prefix' => 'Food', 'namespace' => 'Admin', 'middleware' => 'admin'], function (){
+    Route::get('form', 'FoodController@getForm');
+    Route::post('form', 'FoodController@postForm');
+    Route::get('list', 'FoodController@getList');
+    Route::post('status', 'FoodController@postStatus');
+});
+
 //CityController
-Route::group(['prefix' => 'City', 'namespace' => 'Admin', 'middleware' => 'admin'], function (){
+Route::group(['prefix' => 'City', 'namespace' => 'Admin'], function (){
     Route::get('firstLevelCity', 'CityController@getFirstLevelCity');
     Route::get('nextLevelCity', 'CityController@getNextLevelCity');
 });

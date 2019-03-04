@@ -124,7 +124,7 @@ class BaseController extends Controller
             ]);
 
         if ($success){
-            return $this->ajaxSuccess(null,"修改状态成功",$this->getMarkPage());
+            return $this->ajaxSuccess(null,"修改状态成功",$_SERVER['HTTP_REFERER']);
         }
         return $this->ajaxFail(null,'修改状态失败');
     }
@@ -179,14 +179,14 @@ class BaseController extends Controller
         if ($parent['parent_id'] == 0){
             return $parent['url'];
         }
-        $parent_url = DB::table('menus')->find($parent['id']);
+        $parent_url = DB::table('menus')->find($parent['parent_id']);
 
         return $parent_url['url'];
     }
 
     // 上传图片
     public function uploadImage(Request $request){
-        $image = $request->file('avatar');
+        $image = $request->file('image');
 
         $image_path = "uploads/images";
         $rules = ['jpg', 'png', 'gif'];

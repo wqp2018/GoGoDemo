@@ -9,13 +9,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Builder;
 
 class BaseApiController extends Controller{
 
-    public function apiSuccess($data = [], $msg = ""){
+    public function __construct()
+    {
+
+    }
+
+    public function apiSuccess($data = [], $msg = "", $url = ""){
         $return['status'] = 1;
         $return['data'] = $data;
         $return['msg'] = $msg;
+        $return['url'] = $url;
 
         return $return;
     }

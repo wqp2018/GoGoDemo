@@ -17,9 +17,9 @@ use DB;
 class LoginController extends Controller{
 
     public function userLogin(){
-//        if (Session::get('user') != null){
-//            return redirect('');
-//        }
+        if (Session::get('user') != null){
+            return redirect('UserApi/homePage');
+        }
         return view('login');
     }
 
@@ -38,7 +38,9 @@ class LoginController extends Controller{
         }
 
         $user = DB::table('user')
+            ->leftJoin('user_address as ua', 'ua.user_id', '=', 'user.id')
             ->where('user_name', $data['username'])
+            ->select(['user.*', 'ua.lat', 'ua.lng', 'ua.address'])
             ->first();
 
         if ($user){

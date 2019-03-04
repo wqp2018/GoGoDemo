@@ -223,6 +223,7 @@
                         })
                     } else {
                         $("#image_show").attr("src", res.url)
+                        $("input[name='avatar']").val(res.url)
                     }
                 }
             })
@@ -347,12 +348,13 @@
                         async: false,
                         type: "get",
                         success: function (res) {
-                            currentUrl = res.info.second_url;
+                            currentUrl = res.info.top_url;
                         }
                     })
                     parent_id = $(".menus[href='"+currentUrl+"']").attr('menu_id');
                 }
-                var url = "{{url('Base/childMenus')}}?parent_id=" + parent_id;
+
+              var url = "{{url('Base/childMenus')}}?parent_id=" + parent_id;
                 $.ajax({
                     url: url,
                     type: "GET",

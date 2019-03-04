@@ -47,6 +47,7 @@ function get_db_config($name){
     return $result;
 }
 
+// 获取随机数
 function getRandNum($size){
     $num = "";
     for ($i = 0; $i < $size; $i++){
@@ -54,4 +55,66 @@ function getRandNum($size){
     }
 
     return $num;
+}
+
+// 检验手机格式
+function formatPhoneNumber($phone){
+    $format = "/^1[34578]\d{9}$/";
+    if (preg_match($format, $phone)){
+        return true;
+    }
+    return false;
+}
+
+// 有空值，返回true
+function hasEmpty($data = []){
+    foreach ($data as $k => $v){
+        if (empty($v)){
+            return true;
+        }
+    }
+    return false;
+}
+
+// 均为空，返回true
+function allEmpty($data = []){
+    foreach ($data as $k => $v){
+        if (!empty($v)){
+            return false;
+        }
+    }
+    return true;
+}
+
+function timeStrToTime($str){
+    $time = explode(":", $str);
+    if (count($time) != 2){
+        throw new \Exception("时间格式有误");
+    }
+    try{
+        $minutes = intval($time[0]) * 60 + intval($time[1]);
+    }catch (\Exception $e){
+        throw new \Exception("时间格式有误");
+    }
+    return $minutes;
+}
+
+if (!function_exists("calculate_delivery_fee")){
+    function calculate_delivery_fee($distance = 0){
+        // 1000 米收一块钱
+        $fee = ceil($distance / 1000);
+        return $fee;
+    }
+}
+
+if (!function_exists("pageSelect")){
+    function pageSelect(\Illuminate\Database\Query\Builder $builder, $page_size = 0){
+        $result = $builder->paginate($page_size);
+
+        $list['data'] = $result->items();
+        $list['total'] = $result->total();
+        $list['currentPage'] = $result->currentPage();
+        $list['page'] = $result->render();
+        return $list;
+    }
 }

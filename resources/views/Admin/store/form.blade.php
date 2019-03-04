@@ -5,9 +5,6 @@
         .form-item{
             margin-bottom: 20px;
         }
-        #app_form{
-            overflow: auto;
-        }
     </style>
     @stop
 @section('head')
@@ -27,56 +24,57 @@
                 <div class="form-item">
                     <h3>店家图片 : </h3>
                     <div style="height: 120px; width: 120px;margin-bottom: 10px">
-                        <img id="image_show" style="height: 120px; width: 120px;" src="" onerror="this.src='{{'/uploads/images/add_image.jpg'}}'">
+                        <img id="image_show" style="height: 120px; width: 120px;" src="{{$data['avatar'] or ""}}" onerror="this.src='{{'/uploads/images/add_image.jpg'}}'">
                     </div>
-                    <input class="uploadImage hidden" type="file" name="avatar">
+                    <input class="uploadImage hidden" type="file" name="image" value="">
+                    <input type="hidden" name="avatar" value="{{$data['avatar'] or ""}}" />
                     <button class="btn btn-primary" onclick="uploadImage()" type="button">上传图片</button>
                 </div>
 
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon" id="sizing-store-name">店家名称</span>
-                    <input type="text" name="name" class="form-control" aria-describedby="sizing-store-name">
+                    <input type="text" name="name" value="{{$data['name'] or ""}}" class="form-control" aria-describedby="sizing-store-name">
                 </div>
 
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon" id="sizing-store-phone">联系电话</span>
-                    <input type="text" name="phone" class="form-control" aria-describedby="sizing-store-phone">
+                    <input type="text" name="phone" value="{{$data['phone'] or ""}}" class="form-control" aria-describedby="sizing-store-phone">
                 </div>
 
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon" id="sizing-store-address">店家地址</span>
-                    <input type="text" name="address" class="form-control" aria-describedby="sizing-store-address">
+                    <input type="text" name="address" value="{{$data['address'] or ""}}" class="form-control" aria-describedby="sizing-store-address">
                 </div>
 
-                <ul>
-                    <li v-for="item in this.firstLevelCity">1</li>
-                </ul>
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon">店家所在地</span>
                     <select class="form-control" style="width: 20%" id="first-city">
                         <option value="0">请选择</option>
-                        <option v-for="item in app_form.firstLevelCity">1</option>
+                        @foreach($data['city'] as $k => $v)
+                            <option value="{{$v['id']}}" @if($v['id'] == $data['next_next_city']) selected @endif>{{$v['name']}}</option>
+                            @endforeach
                     </select>
                     <select class="form-control" style="width: 20%" id="second-city">
                         <option value="0">请选择</option>
                     </select>
-                    <select name="city" class="form-control" style="width: 20%" id="third-city">
+                    <select name="city_id" class="form-control" style="width: 20%" id="third-city">
                         <option value="0">请选择</option>
                     </select>
                 </div>
 
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon">经 纬 度</span>
-                    <input class="input-lg" type="text" readonly placeholder="纬度" name="lat"> -
-                    <input class="input-lg" type="text" readonly placeholder="经度" name="lng">
+                    <input class="input-lg" type="text" readonly placeholder="纬度" name="lat" value="{{$data['lat'] or ""}}"> -
+                    <input class="input-lg" type="text" readonly placeholder="经度" name="lng" value="{{$data['lng'] or ""}}">
                     <button style="margin-left: 20px" type="button" class="btn btn-primary" onclick="getMap()">获取店家地址信息</button>
                 </div>
 
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon">支付方式</span>
-                    <div style="font-size: 24px;line-height: 60px">
-                        <input style="margin-left: 20px" type="checkbox" name="pay_type" value="1">现金
-                        <input type="checkbox" name="pay_type" value="2">支付宝
+                    <div style="font-size: 24px;line-height: 60px;margin-left: 20px">
+                        @foreach($pay_type as $k => $v)
+                            <input style="" type="checkbox" name="pay_type[]" value="{{$k}}" @if(in_array($k, $data['pay_type'])) checked @endif>{{$v}}
+                            @endforeach
                     </div>
                 </div>
 
@@ -84,19 +82,19 @@
                     <span class="input-group-addon">营<br>业<br>时<br>间</span>
                     <div class="form-item input-group input-group-lg">
                         <span class="input-group-addon" id="sizing-addon1">第一个营业时间段</span>
-                        <input type="text" style="display: inline-block;width: 40%;" class="input-lg form_datetime" name="first_begin_time" > --
-                        <input type="text" style="display: inline-block;width: 40%;" class="input-lg form_datetime" name="first_end_time">
+                        <input type="text" style="display: inline-block;width: 40%;" class="input-lg form_datetime" readonly name="business_time[first_begin_time]"> --
+                        <input type="text" style="display: inline-block;width: 40%;" class="input-lg form_datetime" readonly name="business_time[first_end_time]">
                     </div>
                     <div style="margin-bottom: 0px" class="form-item input-group input-group-lg">
                         <span class="input-group-addon" id="sizing-addon2">第二个营业时间段</span>
-                        <input type="text" style="display: inline-block;width: 40%" class="input-lg form_datetime" name="second_begin_time" aria-describedby="sizing-addon2"> --
-                        <input type="text" style="display: inline-block;width: 40%" class="input-lg form_datetime" name="second_end_time select-time-end" aria-describedby="sizing-addon2">
+                        <input type="text" style="display: inline-block;width: 40%" class="input-lg form_datetime" readonly name="business_time[second_begin_time]" aria-describedby="sizing-addon2"> --
+                        <input type="text" style="display: inline-block;width: 40%" class="input-lg form_datetime" readonly name="business_time[second_end_time]" aria-describedby="sizing-addon2">
                     </div>
                 </div>
 
                 <div class="form-item input-group input-group-lg">
                     <span class="input-group-addon" id="sizing-store-delivery-range">配送范围 (米)</span>
-                    <input type="text" style="width: 40%" name="delivery_range" class="form-control" aria-describedby="sizing-store-delivery-range">
+                    <input type="text" style="width: 40%" name="delivery_range" value="{{$data['delivery_range'] or 0}}" class="form-control" aria-describedby="sizing-store-delivery-range">
                 </div>
 
                 <div class="form-group center-block">
@@ -112,65 +110,73 @@
     <script>
         $(function () {
             $('.form_datetime').datetimepicker({
-                format: 'HH:ii',
+                format: 'hh:ii',
                 language: "zh-CN",
                 startView: "day",
                 autoclose: true
             });
+            $("input[name='business_time[first_begin_time]']").val("{{$data['business_time']['first_begin_time'] or ""}}")
+            $("input[name='business_time[first_end_time]']").val("{{$data['business_time']['first_end_time'] or ""}}")
+            $("input[name='business_time[second_begin_time]']").val("{{$data['business_time']['second_begin_time'] or ""}}")
+            $("input[name='business_time[second_end_time]']").val("{{$data['business_time']['second_end_time'] or ""}}")
 
-            // 获取一级城市
-            getFirstLevelCity()
+            if ($("#first-city option:selected").val() != 0){
+                changeSecondLevelCity("{{$data['next_next_city']}}")
+            }
 
             $("#first-city").change(function () {
-                var parent_id = $("#first-city option:selected").val();
-                var url = "{{url('/City/nextLevelCity')}}"
-                $.ajax({
-                    url: url,
-                    data: {
-                        parent_id: parent_id
-                    },
-                    success: function (res) {
-                        $("#second-city").empty();
-                        $("#second-city").append("<option value='"+0+"'>"+"请选择"+"</option>");
-                        var data = res.info
-                        for (var i in data){
-                            $("#second-city").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
-                            $("#second-city option").eq(1).attr("selected", "selected")
-                        }
-                    }
-                })
+                changeSecondLevelCity()
             })
 
             $("#second-city").change(function () {
-                var parent_id = $("#second-city option:selected").val();
-                var url = "{{url('/City/nextLevelCity')}}"
-                $.ajax({
-                    url: url,
-                    data: {
-                        parent_id: parent_id
-                    },
-                    success: function (res) {
-                        $("#third-city").empty();
-                        $("#third-city").append("<option value='"+0+"'>"+"请选择"+"</option>");
-                        var data = res.info
-                        for (var i in data){
-                            $("#third-city").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
-                            $("#third-city option").eq(1).attr("selected", "selected")
-                        }
-                    }
-                })
+                changeThirdLevelCity()
             })
         })
 
-        function getFirstLevelCity() {
-            var url = "{{url('/City/firstLevelCity')}}"
+        function changeSecondLevelCity() {
+            var parent_id = $("#first-city option:selected").val();
+            var url = "{{url('/City/nextLevelCity')}}"
             $.ajax({
                 url: url,
-                async: false,
+                data: {
+                    parent_id: parent_id
+                },
                 success: function (res) {
-                    var data = res.info;
+                    $("#second-city").empty();
+                    $("#second-city").append("<option value='"+0+"'>"+"请选择"+"</option>");
+                    var data = res.info
+                    var select_id = "{{$data['next_city'] ?? 0}}";
                     for (var i in data){
-                        $("#first-city").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+                        if (data[i].id == select_id){
+                            $("#second-city").append("<option value='"+data[i].id+"' selected>"+data[i].name+"</option>");
+                        } else {
+                            $("#second-city").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+                        }
+                        changeThirdLevelCity()
+                    }
+                }
+            })
+        }
+
+        function changeThirdLevelCity() {
+            var parent_id = $("#second-city option:selected").val();
+            var url = "{{url('/City/nextLevelCity')}}"
+            $.ajax({
+                url: url,
+                data: {
+                    parent_id: parent_id
+                },
+                success: function (res) {
+                    $("#third-city").empty();
+                    $("#third-city").append("<option value='"+0+"'>"+"请选择"+"</option>");
+                    var data = res.info
+                    var select_id = "{{$data['city_id'] ?? 0}}"
+                    for (var i in data){
+                        if (data[i].id == select_id){
+                            $("#third-city").append("<option value='"+data[i].id+"' selected>"+data[i].name+"</option>");
+                        } else {
+                            $("#third-city").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+                        }
                     }
                 }
             })

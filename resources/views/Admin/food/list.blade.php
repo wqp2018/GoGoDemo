@@ -2,18 +2,21 @@
 
 @section('body')
     <div>
-        <h3>店家列表</h3>
+        <h3>@if($store_name != null) [{{$store_name}}] @endif餐点列表</h3>
         <div class="item">
             <div class="header">
                 <div class="col-lg-6">
-                    <a class="btn btn-primary" href="{{url('Store/form')}}">新增</a>
-                    <button type="button" url="{{action('Admin\StoreController@postStatus', ['mod' => 'store'])}}" class="btn btn-primary btn_enable">启用</button>
-                    <button type="button" url="{{action('Admin\StoreController@postStatus', ['mod' => 'store'])}}" class="btn btn-primary btn_disable">禁用</button>
+                    @if($store_id != 0)
+                        <a class="btn btn-primary" href="{{url('Food/form')."?store_id={$store_id}"}}">新增</a>
+                    @endif
+                    <button type="button" url="{{action('Admin\FoodController@postStatus', ['mod' => 'food'])}}" class="btn btn-primary btn_enable">启用</button>
+                    <button type="button" url="{{action('Admin\FoodController@postStatus', ['mod' => 'food'])}}" class="btn btn-primary btn_disable">禁用</button>
                 </div>
                 <div class="col-lg-6">
-                    <form action="{{url('/Store/list')}}">
+                    <form action="{{url('/Food/list')}}">
                         <div class="input-group">
-                            <input type="text" name="keyword" value="{{$keyword or ''}}" class="form-control" placeholder="请输入店家名称">
+                            <input type="text" name="keyword" value="{{$keyword or ''}}" class="form-control" placeholder="请输入餐点名称">
+                            <input type="hidden" name="store_id" value="{{$store_id or ''}}" class="form-control">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="submit">查找</button>
                             </span>
@@ -27,10 +30,12 @@
                     <tr>
                         <th><input name="select_all" class="ids" type="checkbox"></th>
                         <th>id</th>
-                        <th>店家名称</th>
-                        <th>店家图片</th>
-                        <th>联系方式</th>
+                        <th>餐点名称</th>
+                        <th>餐点图片</th>
+                        <th>价格</th>
+                        <th>库存</th>
                         <th>总销量</th>
+                        <th>店家名称</th>
                         <th>状态</th>
                         <th>操作</th>
                     </tr>
@@ -40,19 +45,21 @@
                         <tr>
                             <td><input class="select_id" name="ids" type="checkbox" value="{{$v['id']}}"></td>
                             <td>{{$v['id']}}</td>
-                            <td><a href="{{url('Food/list')."?store_id={$v['id']}"}}">{{$v['name']}}</a></td>
+                            <td>{{$v['name']}}</td>
                             <td><img src="{{$v['avatar']}}" height="48px" width="48px"></td>
-                            <td>{{$v['phone']}}</td>
+                            <td>{{$v['price']}}</td>
+                            <td>{{$v['inventory']}}</td>
                             <td>{{$v['total_sale']}}</td>
+                            <td><a href="{{url('Food/list')."?store_id={$v['store_id']}"}}">{{$v['store_name']}}</a></td>
                             <td>
                                 @if($v['status'] == 1)
-                                    <a class="ajax-post" url="{{action('Admin\StoreController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'store'])}}"><span class="glyphicon glyphicon-ok"></span></a>
+                                    <a class="ajax-post" url="{{action('Admin\FoodController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'food'])}}"><span class="glyphicon glyphicon-ok"></span></a>
                                 @else
-                                    <a class="ajax-post" url="{{action('Admin\StoreController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'store'])}}"><span class="glyphicon glyphicon-remove"></span></a>
+                                    <a class="ajax-post" url="{{action('Admin\FoodController@postStatus',['status' => abs(1-$v['status']),'id' => $v['id'],'mod' => 'food'])}}"><span class="glyphicon glyphicon-remove"></span></a>
                                 @endif
                             </td>
                             <td>
-                                <a href="{{action('Admin\StoreController@getForm', ['id' => $v['id']])}}"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a href="{{action('Admin\FoodController@getForm', ['id' => $v['id']])}}"><span class="glyphicon glyphicon-pencil"></span></a>
                             </td>
                         </tr>
                     @empty

@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use DB;
 
 class UserService{
 
@@ -29,5 +30,16 @@ class UserService{
         }
 
         return $user;
+    }
+
+    // 检查用户是否存在一个默认地址
+    public function checkUserAddress($user_id){
+        $result = DB::table('user')->find($user_id);
+
+        if ($result['default_address_id'] == 0){
+            return false;
+        }
+
+        return true;
     }
 }

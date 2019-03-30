@@ -25,24 +25,29 @@ function set_db_config($name, $value, $remark = ""){
     if ($exist){
         DB::table('config')->where("name", $name)->update([
             "value" => json_encode($value),
-            "remark" => $remark
+            "remark" => $remark,
+            "update_time" => time()
         ]);
     }else{
         DB::table('config')->insert([
             "name" => $name,
             "value" => $value,
-            "remark" => $remark
+            "remark" => $remark,
+            "create_time" => time()
         ]);
     }
     \Cache::add($name, $value, env("CACHE_MINUTES"));
 }
 
-function get_db_config($name){
+function get_db_config($name, $default = 0){
     $result = \Cache::get($name);
     if ($result){
         return $result;
     }
     $result = DB::table('config')->where('name', $name)->value("value");
+    if (!$result){
+        return $default;
+    }
     \Cache::add($name, $result, env("CACHE_MINUTES"));
     return $result;
 }
@@ -107,12 +112,24 @@ if (!function_exists("calculate_delivery_fee")){
     }
 }
 
+if (!function_exists("get_expect_delivery_time")){
+    function get_expect_delivery_time($distance = 0){
+        // 设置300m 每分钟， 5米 每秒
+        $second = $distance / 5;
+        // 默认增加时间
+        $default_add_time = get_db_config('extra_add_time', 30) * 60;
+
+        return time() + $second + $default_add_time;
+    }
+}
+
 if (!function_exists("pageSelect")){
     function pageSelect(\Illuminate\Database\Query\Builder $builder, $page_size = 0){
         $result = $builder->paginate($page_size);
 
         $list['data'] = $result->items();
         $list['total'] = $result->total();
+        $list['total_page'] = $result->lastPage();
         $list['currentPage'] = $result->currentPage();
         $list['page'] = $result->render();
         return $list;

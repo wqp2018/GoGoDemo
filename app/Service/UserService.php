@@ -26,6 +26,7 @@ class UserService{
         // 获取redis中的key
         $redis_session_key = \Cache::get($session_id_key);
         if ($session_id != $redis_session_key){
+            \Session::forget('user');
             throw new \Exception("登录信息已失效，请重新登录");
         }
 

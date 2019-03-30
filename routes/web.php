@@ -52,6 +52,8 @@ Route::group(['prefix' => 'Store','namespace' => 'Admin', 'middleware' => 'admin
     Route::post('form','StoreController@postForm');
     Route::get('list','StoreController@getList');
     Route::post('status','StoreController@postStatus');
+    Route::get('config', 'StoreController@getConfig');
+    Route::post('config', 'StoreController@postConfig');
 });
 Route::get('Store/map','Admin\StoreController@getMap');
 
@@ -76,4 +78,10 @@ Route::group(['prefix' => 'Food', 'namespace' => 'Admin', 'middleware' => 'admin
 Route::group(['prefix' => 'City', 'namespace' => 'Admin'], function (){
     Route::get('firstLevelCity', 'CityController@getFirstLevelCity');
     Route::get('nextLevelCity', 'CityController@getNextLevelCity');
+});
+
+
+Route::group(['prefix' => 'Order', 'namespace' => 'Admin', 'middleware' => 'admin'], function (){
+    Route::get('list', 'OrderController@getList');
+
 });

@@ -58,7 +58,7 @@
                     <div class="link-list" style="margin-top: 18px">
                         <ul class="nav" role="tablist">
                             <li role="presentation" class="active"><a href="#">个人信息</a></li>
-                            <li role="presentation"><a href="#">我的订单</a></li>
+                            <li role="presentation"><a href="{{url('OrderApi/orderList')}}">我的订单</a></li>
                             <li role="presentation"><a href="#">信息</a></li>
                             <li role="presentation"><a href="javascript:void(0)" onclick="logout()">退出登录</a></li>
                         </ul>
@@ -87,7 +87,7 @@
                                         <img src="{{$v['avatar']}}" height="200px" width="200px">
                                     </div>
                                     <div class="caption">
-                                        <h4 style="display: inline-block;width: 120px">{{$v['name']}}</h4>
+                                        <h4 style="display: inline-block;width: 120px"><a href="{{url('UserApi/store')."?id={$v['id']}"}}">{{$v['name']}}</a></h4>
                                         <span style="color: #b57c5b;font-size: 18px;">销量:{{$v['total_sale']}}</span>
                                     </div>
                                     <div>
@@ -123,7 +123,7 @@
                                             <img src="{{$v['avatar']}}" height="200px" width="200px">
                                         </div>
                                         <div class="caption">
-                                            <h4 style="display: inline-block;width: 120px">{{$v['name']}}</h4>
+                                            <h4 style="display: inline-block;width: 120px"><a href="{{url('UserApi/store')."?id={$v['id']}"}}">{{$v['name']}}</a></h4>
                                             <span style="color: #b57c5b;font-size: 18px;">销量:{{$v['total_sale']}}</span>
                                         </div>
                                         <div>

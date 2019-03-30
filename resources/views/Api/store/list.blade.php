@@ -34,7 +34,7 @@
                     <div class="col-xs-6 col-md-3">
                         <div class="thumbnail" style="display: inline-block">
                             <div>
-                                <div class="covering thumbnail" @if($v['abnormal_status'] == 0) hidden @endif>
+                                <div class="covering" @if($v['abnormal_status'] == 0) hidden @endif>
                                     @if($v['abnormal_status'] == 1)
                                         <span class="show_tip">已超出配送范围</span>
                                     @elseif($v['abnormal_status'] == 2)

@@ -79,12 +79,39 @@ class UserApiController extends BaseApiController {
     }
 
     public function getStore(Request $request){
+        try{
+            $user = $this->userService->checkUserLogin();
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
         $id = $request->get('id', 0);
 
+        $field = sprintf('get_distance(lat,lng,%s,%s) as distance', $user['lat'], $user['lng']);
         $data = DB::table('store')
-            ->find($id);
+            ->where('id', $id)
+            ->selectRaw($field)
+            ->addSelect('store.*')
+            ->first();
+
+        $store_service = new StoreService();
+        $check_business_time = $store_service->checkStoreAbnormalStatus($data);
+
+        $data['abnormal_status'] = $check_business_time['status'];
+        $data['tip_business_time'] = $check_business_time['str'];
+        $data['delivery_fee'] = intval(calculate_delivery_fee($data['distance']));
 
         return view('Api.store.store', compact('data'));
+    }
+
+    public function getStoreFood(Request $request){
+        $store_id = $request->get('store_id');
+
+        $foods = DB::table('food')
+            ->where('status', 1)
+            ->where('store_id', $store_id)
+            ->get();
+
+        return $this->apiSuccess($foods);
     }
 
     // 用户添加地址

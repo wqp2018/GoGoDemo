@@ -54,6 +54,21 @@
             })
         })
     })
+
+    //  弹窗
+    function openDialog(size, url, title) {
+        if (title == ""){
+            title = "信息"
+        }
+        layer.open({
+            type: 2,
+            area: [size.width, size.height],
+            title: title,
+            fixed: false, //不固定
+            maxmin: true,
+            content: url
+        });
+    }
 </script>
 </html>
 @section('script')

@@ -31,6 +31,6 @@ class ChangeStoreOpenStatus extends Command {
     }
 
     public function handle(){
-
+        \Log::info("肤若凝脂气幽兰");
     }
 }

@@ -124,6 +124,14 @@ class LoginController extends Controller{
 
     }
 
+    public function adminLogout(){
+        Session::forget('admin');
+        $response['code'] = 1;
+        $response['msg'] = "退出成功";
+        $response['url'] = url("/");
+        return $response;
+    }
+
     // 生成验证码
     public function getCaptcha(){
         $builder = new CaptchaBuilder();
@@ -139,6 +147,49 @@ class LoginController extends Controller{
         header("Cache-Control: no-cache, must-revalidate");
         header('Content-Type: image/jpeg');
         $builder->output();
+    }
+
+    public function driverLogin(){
+        return view('Admin.driver.login');
+    }
+
+    public function postDriverLogin(Request $request){
+        $phone = $request->get('phone', null);
+        $password = $request->get('pass_word', null);
+        $page_captcha = $request->get("captcha");
+        $captcha = Session::get('myCaptcha');
+        if (!$page_captcha || strcasecmp($captcha, $page_captcha) != 0){
+            $response['msg'] = "验证码错误，请重新输入";
+            return $response;
+        }
+        $response['status'] = 0;
+        $response['msg'] = "";
+        $response['url'] = "";
+
+        if ($phone === null){
+            $response['msg'] = "请输入正确的账号";
+            return $response;
+        }
+
+        if ($password === null){
+            $response['msg'] = "请先输入密码";
+            return $response;
+        }
+
+        $driver = DB::table('driver')->where('phone', $phone)->first();
+        if ($password == \Crypt::decrypt($driver['pass_word'])){
+            Session::put('driver', $driver);
+            $response['status'] = 1;
+            $response['msg'] = "登录成功，即将跳转";
+            $response['url'] = "/DriverApi/index";
+
+            return $response;
+        }
+
+        $response['msg'] = "用户名或密码错误";
+
+        return $response;
+
     }
 
 }

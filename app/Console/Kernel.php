@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Psy\Command\Command;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         //
         Commands\ChangeStoreOpenStatus::class,
+        Commands\AutoRefuseOrder::class
     ];
 
     /**
@@ -28,6 +30,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
         $schedule->command('change_store_open_status')->everyMinute();
+        $schedule->command('auto_refuse_order')->everyMinute();
     }
 
     /**

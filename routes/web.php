@@ -21,6 +21,9 @@ Route::get('/login','LoginController@userLogin');
 Route::post('/login','LoginController@postUserLogin');
 Route::get('/adminLogin','LoginController@adminLogin');
 Route::post('/adminLogin','LoginController@postAdminLogin');
+Route::post('/adminLogout','LoginController@adminLogout');
+Route::get('/driverLogin','LoginController@driverLogin');
+Route::post('/driverLogin','LoginController@postDriverLogin');
 
 // 测试
 Route::get('TestApi/test', 'Api\TestApiController@getTest');
@@ -80,8 +83,18 @@ Route::group(['prefix' => 'City', 'namespace' => 'Admin'], function (){
     Route::get('nextLevelCity', 'CityController@getNextLevelCity');
 });
 
+//DriverController
+Route::group(['prefix' => 'Driver', 'namespace' => 'Admin'], function (){
+    Route::get('list', 'DriverController@getList');
+    Route::get('form', 'DriverController@getForm');
+    Route::post('form', 'DriverController@postForm');
+});
 
 Route::group(['prefix' => 'Order', 'namespace' => 'Admin', 'middleware' => 'admin'], function (){
     Route::get('list', 'OrderController@getList');
-
+    Route::post('acceptOrder', 'OrderController@acceptOrder');
+    Route::post('refuseOrder', 'OrderController@refuseOrder');
+    Route::get('cancelOrderList', 'OrderController@cancelOrderList');
+    Route::post('allowCancelOrder', 'OrderController@allowCancelOrder');
+    Route::get('orderDetail', 'OrderController@orderDetail');
 });

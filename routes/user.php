@@ -7,10 +7,14 @@ Route::group(['prefix' => 'UserApi','namespace' => 'Api\User','middleware' => 'u
     Route::post('logout','UserApiController@logout');
     Route::get('store', 'UserApiController@getStore');
     Route::get('storeFood', 'UserApiController@getStoreFood');
+    Route::get('myAddress', 'UserApiController@getMyAddress');
+    Route::get('pushMessage', 'UserApiController@pushMessage');
+    Route::get('deleteMessage', 'UserApiController@deleteMessage');
 });
 
 Route::get('UserApi/addressForm', 'Api\User\UserApiController@getAddressForm');
 Route::post('UserApi/addressForm', 'Api\User\UserApiController@postAddressForm');
+Route::get('UserApi/deleteAddress', 'Api\User\UserApiController@deleteAddress');
 
 Route::group(['prefix' => 'OrderApi','namespace' => 'Api\Order','middleware' => 'user_address'],function (){
     Route::post('beforeOrdering', 'OrderApiController@beforeOrdering');
@@ -21,4 +25,11 @@ Route::group(['prefix' => 'OrderApi','namespace' => 'Api\Order','middleware' => 
     Route::get('orderList', 'OrderApiController@orderList');
     Route::get('orderListAjax', 'OrderApiController@orderListAjax');
     Route::get('cancelOrder', 'OrderApiController@cancelOrder');
+});
+
+Route::group(['prefix' => 'DriverApi','namespace' => 'Api\Driver'],function (){
+    Route::get('index','DriverApiController@getIndex');
+    Route::get('acceptOrder','DriverApiController@acceptOrder');
+    Route::get('refuseOrder','DriverApiController@refuseOrder');
+    Route::get('finishOrder','DriverApiController@finishOrder');
 });

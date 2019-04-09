@@ -57,9 +57,9 @@
                     <span style="font-size: 18px">{{$user['user_name']}}</span>
                     <div class="link-list" style="margin-top: 18px">
                         <ul class="nav" role="tablist">
-                            <li role="presentation" class="active"><a href="#">个人信息</a></li>
+                            <li role="presentation" class="active"><a href="{{url('UserApi/myAddress')}}">地址管理</a></li>
                             <li role="presentation"><a href="{{url('OrderApi/orderList')}}">我的订单</a></li>
-                            <li role="presentation"><a href="#">信息</a></li>
+                            <li role="presentation"><a href="{{url('UserApi/pushMessage')}}">消息</a></li>
                             <li role="presentation"><a href="javascript:void(0)" onclick="logout()">退出登录</a></li>
                         </ul>
                     </div>

@@ -24,7 +24,7 @@
     }
     body {
         font-family: Arial;
-        background-color: #3498DB;
+        background-color: #FFFF66;
         padding: 50px;
     }
     .login {
@@ -100,17 +100,17 @@
 <div class="login">
     <div class="login-screen">
         <div class="app-title">
-            <h1>@if(isset($admin)) 管理员登录 @else 会员登陆 @endif</h1>
+            <h1>骑手登录</h1>
         </div>
-        <form method="post" @if(isset($admin)) url="{{url('/adminLogin')}}" @else url="{{url('/login')}}" @endif>
+        <form method="post" url="{{url('/driverLogin')}}">
             <div class="login-form">
                 <div class="control-group">
-                    <input type="text" class="login-field" name="username" value="" placeholder="请输入用户名" id="login-name">
+                    <input type="text" class="login-field" name="phone" value="" placeholder="请输入用户名" id="login-name">
                     <label class="login-field-icon fui-user" for="login-name"></label>
                 </div>
 
                 <div class="control-group">
-                    <input type="password" class="login-field" name="password" value="" placeholder="请输入密码" id="login-pass">
+                    <input type="password" class="login-field" name="pass_word" value="" placeholder="请输入密码" id="login-pass">
                     <label class="login-field-icon fui-lock" for="login-pass"></label>
                 </div>
 
@@ -120,9 +120,6 @@
                 </div>
 
                 <button type="button" style="margin-bottom: 10px" class="confirm btn btn-primary">确定</button>
-                @if(!isset($admin))
-                    <a href="{{url('/register')}}">注册</a>
-                @endif
             </div>
         </form>
     </div>
@@ -146,7 +143,7 @@
                 type: "post",
                 data: data,
                 success: function (res) {
-                    if (res != null && res.code == 0){
+                    if (res != null && res.status == 0){
                         layer.confirm(res.msg, {
                             btn: ['确定'] //按钮
                         });

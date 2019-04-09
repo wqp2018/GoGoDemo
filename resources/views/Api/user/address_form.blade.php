@@ -1,9 +1,12 @@
 @extends('Api.base')
 
 @section('style')
-    .form-item{
-    margin-bottom: 20px;
-    }
+    <style>
+        .form-item{
+            margin-bottom: 20px;
+        }
+    </style>
+
     @stop
 
 @section('body')

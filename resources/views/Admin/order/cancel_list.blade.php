@@ -19,23 +19,21 @@
 
 @section('body')
     <div>
-        <h3>订单列表</h3>
+        <h3>请求取消订单列表</h3>
         <div class="item">
-            <form id="form" action="{{url('/Order/list')}}">
+            <form id="form" action="{{url('/Order/cancelOrderList')}}">
                 <div class="header">
-                    <div class="col-lg-6">
-                        <input type="checkbox" class="change_data" value="1" @if($cancel_order == 1) checked @endif name="cancel_order"> 已取消订单 &nbsp;
-                        <input type="checkbox" class="change_data" value="1" @if($complete_order == 1) checked @endif name="complete_order"> 已完成订单 &nbsp;&nbsp;
+                    <div class="col-lg-6">&nbsp;&nbsp;
                         <input type="text" style="display: inline-block;width: 20%;" class="input-sm form-datetime change_data" readonly name="select_time[begin_time]"> --
                         <input type="text" style="display: inline-block;width: 20%;" class="input-sm form-datetime change_data" readonly name="select_time[end_time]">
                     </div>
                     <div class="col-lg-6">
-                            <div class="input-group">
-                                <input type="text" name="keyword" value="{{$keyword or ''}}" class="form-control" placeholder="请输入用户姓名或店家名称">
-                                <span class="input-group-btn">
+                        <div class="input-group">
+                            <input type="text" name="keyword" value="{{$keyword or ''}}" class="form-control" placeholder="请输入用户姓名或店家名称">
+                            <span class="input-group-btn">
                                     <button class="btn btn-default" onclick="order_search()" type="submit">查找</button>
                                 </span>
-                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -46,9 +44,9 @@
                 <tr>
                     <th>id</th>
                     <th>店家名称</th>
-                    <th>订单状态</th>
-                    <th>骑手信息</th>
-                    <th>骑手联系方式</th>
+                    <th>用户姓名</th>
+                    <th>用户联系方式</th>
+                    <th>取消原因</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -56,18 +54,13 @@
                 @forelse($list['data'] as $v)
                     <tr>
                         <td>{{$v['id']}}</td>
-                        <td>{{$v['store_name']}}</td>
-                        <td>{{$v['order_status_ch']}}</td>
-                        <td>{{$v['driver_name'] or ""}}</td>
-                        <td>{{$v['driver_phone'] or ""}}</td>
+                        <td><a href="{{url('Food/list')."?store_id={$v['id']}"}}">{{$v['store_name']}}</a></td>
+                        <td><span>{{$v['user_name']}}</span></td>
+                        <td>{{$v['user_phone']}}</td>
+                        <td>{{$v['cancel_remark']}}</td>
                         <td>
-                            @if($v['order_status'] == 0)
-                            <a href="javascript:void(0)" onclick="acceptOrder({{$v['id']}})">接单</a>
-                                @endif
-                            @if(in_array($v['order_status'], [0,1]))
-                            <a href="javascript:void(0)" onclick="refuseOrder({{$v['id']}})">拒绝订单</a>
-                                @endif
-                            <a href="{{url('Order/orderDetail')."?id=".$v['id']}}">订单详情</a>
+                            <a href="javascript:void(0)" onclick="allowCancel({{$v['id']}})">允许</a>
+                            <a href="javascript:void(0)" onclick="refuseCancel({{$v['id']}})">不允许</a>
                         </td>
                     </tr>
                 @empty
@@ -82,21 +75,21 @@
                 <ul class="pagination">
                     @if($list['currentPage'] == 1)
                         <li class="disabled"><span>&laquo;</span></li>
-                        @else
+                    @else
                         <li><a href="javascript:void(0)" onclick="change_page({{$list['currentPage'] - 1}})">&laquo;</a></li>
                     @endif
                     @for($i = 1; $i <= $list['total_page']; $i++)
-                            @if($list['currentPage'] == $i)
-                                <li class="active"><span>{{$i}}</span></li>
-                                @else
-                                <li><a href="javascript:void(0)" onclick="change_page({{$i}})">{{$i}}</a></li>
-                            @endif
-                        @endfor
-                        @if($list['currentPage'] == $list['total'])
-                            <li class="disabled"><span>&raquo;</span></li>
+                        @if($list['currentPage'] == $i)
+                            <li class="active"><span>{{$i}}</span></li>
                         @else
-                            <li><a href="javascript:void(0)" rel="next" onclick="change_page({{$list['currentPage'] + 1}})">&raquo;</a></li>
+                            <li><a href="javascript:void(0)" onclick="change_page({{$i}})">{{$i}}</a></li>
                         @endif
+                    @endfor
+                    @if($list['currentPage'] == $list['total'])
+                        <li class="disabled"><span>&raquo;</span></li>
+                    @else
+                        <li><a href="javascript:void(0)" rel="next" onclick="change_page({{$list['currentPage'] + 1}})">&raquo;</a></li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -120,43 +113,30 @@
             })
         })
 
-        function order_search() {
-            $("#form").submit();
-        }
-
         function change_page(index) {
             var data = $("#form").serialize() + "&page=" + index;
 
-            window.location.href = "{{url('Order/list')}}?" + data;
+            window.location.href = "{{url('Order/allowCancelOrderList')}}?" + data;
         }
-        
-        function acceptOrder(order_id) {
-            var url = "{{url('Order/acceptOrder')}}?order_id=" + order_id;
+
+        function allowCancel(order_id) {
+            var url = "{{url('Order/allowCancelOrder')}}?order_id=" + order_id;
             $.ajax({
                 url: url,
                 type: "post",
                 success: function (res) {
                     layer.msg(res.message)
-                    setTimeout(function () {
-                        window.location.reload()
-                    }, 1200)
+                    if (res.status == 1) {
+                        setTimeout(function () {
+                            window.location.reload()
+                        }, 1200)
+                    }
                 }
             })
-
         }
 
-        function refuseOrder(order_id) {
-            var url = "{{url('Order/refuseOrder')}}?order_id=" + order_id;
-            $.ajax({
-                url: url,
-                type: "post",
-                success: function (res) {
-                    layer.msg(res.message)
-                    setTimeout(function () {
-                        window.location.reload()
-                    }, 1200)
-                }
-            })
+        function refuseCancel(order_id) {
+
         }
     </script>
-    @stop
+@stop

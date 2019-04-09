@@ -19,6 +19,7 @@ class StoreModel extends BaseModel{
     protected $rule = [
         "name" => "required",
         "phone" => "required",
+        "avatar" => "required",
         "lat" => "required",
         "lng" => "required",
         "city_id" => "required|integer|min:1",
@@ -36,6 +37,7 @@ class StoreModel extends BaseModel{
         "phone" => "联系电话",
         "lat" => "纬度",
         "lng" => "经度",
+        "avatar" => "头像",
         "delivery_range" => "配送范围",
         "city_id" => "城市",
     ];

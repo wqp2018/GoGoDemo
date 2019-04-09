@@ -9,10 +9,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use DB;
 
 class TestApiController extends Controller{
 
     public function getTest(){
-        \Log::info(123);
+
     }
 }

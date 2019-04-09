@@ -60,7 +60,7 @@
                         <li v-for="item in menus"><a class="menus" :menu_id="item.id" :href="item.url">@{{ item.name }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Link</a></li>
+                        <li><a href="javascript:void(0)" onclick="askLogout()">退出</a></li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
@@ -233,6 +233,31 @@
     // 上传图片
     function uploadImage() {
         $(".uploadImage").click()
+    }
+
+    function askLogout() {
+        layer.alert("是否确认退出", {
+            btn: ["确认", "取消"],
+            yes: function() {
+                adminLogout()
+            }
+        });
+    }
+
+    function adminLogout() {
+        var url = "{{url("/adminLogout")}}";
+       $.ajax({
+           url: url,
+           type: "post",
+           success: function (res) {
+               if (res.code == 1) {
+                   layer.msg(res.msg)
+                   setTimeout(function () {
+                       window.location.href = res.url
+                   }, 1200)
+               }
+           }
+       })
     }
 
     //  弹窗

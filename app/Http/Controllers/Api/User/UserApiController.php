@@ -114,12 +114,26 @@ class UserApiController extends BaseApiController {
         return $this->apiSuccess($foods);
     }
 
+    public function getMyAddress(Request $request){
+        try{
+            $user = $this->userService->checkUserLogin();
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+
+        $address_list = DB::table('user_address')
+            ->where('user_id', $user['id'])
+            ->get();
+
+        return view('Api.user.address_list', compact('address_list'));
+    }
+
     // 用户添加地址
     public function getAddressForm(Request $request){
 
         $id = $request->get('id', 0);
+        $data = DB::table('user_address')->find($id);
 
-        $data = [];
         $data['next_city'] = 0;
         $data['next_next_city'] = 0;
 
@@ -135,7 +149,7 @@ class UserApiController extends BaseApiController {
             $data['next_city'] = $result['next_city'];
             $data['next_next_city'] = $result['next_next_city'];
         }
-        $data['city'] = DB::table('city')->where('parent_id', 0)->get();
+        $data['city'] = DB::table('city')->where('parent_id', 0)->get()->toArray();
 
         return view('Api.user.address_form', compact('user', 'data'));
     }
@@ -182,10 +196,69 @@ class UserApiController extends BaseApiController {
         }
 
         if ($success){
-            return $this->apiSuccess("", "{$op}成功",url('/UserApi/homePage'));
+            return $this->apiSuccess("", "{$op}成功",url('/UserApi/myAddress'));
         }
         return $this->apiFail("", "{$op}失败");
 
+    }
+
+    public function deleteAddress(Request $request){
+        try{
+            $user = $this->userService->checkUserLogin();
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+
+        $id = $request->get('id', 0);
+        $address = DB::table('user_address')
+            ->where('id', $id)
+            ->where('user_id', $user['id'])
+            ->first();
+
+        if (!$address){
+            return "获取地址信息失败";
+        }
+
+        DB::table('user_address')->where('id', $id)->delete();
+
+        $address_list = DB::table('user_address')
+            ->where('user_id', $user['id'])
+            ->get();
+
+        return view('Api.user.address_list', compact('address_list'));
+    }
+
+    public function pushMessage(Request $request){
+        try{
+            $user = $this->userService->checkUserLogin();
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+
+        $message_list = DB::table('push')
+            ->where('user_id', $user['id'])
+            ->get();
+
+        return view('Api.user.message_list', compact('message_list'));
+    }
+
+    public function deleteMessage(Request $request){
+        try{
+            $user = $this->userService->checkUserLogin();
+        }catch (\Exception $e){
+            return $e->getMessage();
+        }
+        $id = $request->get('id', 0);
+        DB::table('push')
+            ->where('user_id', $user['id'])
+            ->where('id', $id)
+            ->delete();
+
+        $message_list = DB::table('push')
+            ->where('user_id', $user['id'])
+            ->get();
+
+        return view('Api.user.message_list', compact('message_list'));
     }
 
     // 退出登录

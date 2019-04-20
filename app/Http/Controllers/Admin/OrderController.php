@@ -110,6 +110,11 @@ class OrderController extends BaseController{
         $keyword = $request->get('keyword', "");
 
         $select_time = $request->get('select_time');
+        if (!$select_time['begin_time']){
+            $select_time['begin_time'] = date('Y-m-d', time());
+            $select_time['end_time'] = date('Y-m-d', time());
+        }
+
         $begin_time = strtotime($select_time['begin_time']);
         $end_time = strtotime($select_time['end_time']) + 24 * 60 * 60;
 

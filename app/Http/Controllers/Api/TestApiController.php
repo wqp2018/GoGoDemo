@@ -14,6 +14,5 @@ use DB;
 class TestApiController extends Controller{
 
     public function getTest(){
-
     }
 }

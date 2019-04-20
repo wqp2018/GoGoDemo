@@ -148,7 +148,7 @@ class OrderApiController extends BaseApiController{
         $select_foods = json_decode($request->get('select_food', ""), true);
         $address_id = $request->get('address_id', 0);
         $pay_type = $request->get('pay_type', 1);
-        $remark = $request->get('remark', "");
+        $remark = $request->get('remark', "") ?? "";
 
         if ($address_id == 0){
             // 没有特别选择，使用用户默认地址
@@ -342,9 +342,10 @@ class OrderApiController extends BaseApiController{
         $list = DB::table('order')
             ->leftJoin('store', 'order.store_id', '=', 'store.id')
             ->where('user_id', $user['id'])
-            ->offset($page)
+            ->offset($page * 10)
             ->limit(10)
             ->select(['order.*', 'store.name', 'store.avatar'])
+            ->orderBy('create_time', 'desc')
             ->get()
             ->toArray();
 

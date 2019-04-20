@@ -68,7 +68,7 @@
 
             <div class="form-item input-group input-group-lg">
                 <span class="input-group-addon" id="sizing-food-name">订单备注</span>
-                <input type="text" readonly value="{{$data['remark']}}" class="form-control" aria-describedby="sizing-food-name">
+                <input type="text" readonly value="{{$data['remark'] or ""}}" class="form-control" aria-describedby="sizing-food-name">
             </div>
 
             <div class="form-group center-block">

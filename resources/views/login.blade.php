@@ -8,8 +8,8 @@
     <title>请登录</title>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 
-    <script type="text/javascript" src="{{ asset('/js/jquery.min.js')  }}"></script>
-    <script type="text/javascript" src="{{ asset('/js/layer.js')  }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.min.js')  }}"></script>
+    <script type="text/javascript" src="{{ asset('js/layer.js')  }}"></script>
     <script type="text/javascript" src="{{ asset('js/vue.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/bootstrap.js') }}"></script>
     <title>Document</title>

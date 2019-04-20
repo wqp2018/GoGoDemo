@@ -106,7 +106,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="口味、偏好" aria-describedby="basic-addon1">
+                            <input type="text" name="remark" value="" class="form-control" placeholder="口味、偏好" aria-describedby="basic-addon1">
                         </div>
                     </div>
                 </div>
